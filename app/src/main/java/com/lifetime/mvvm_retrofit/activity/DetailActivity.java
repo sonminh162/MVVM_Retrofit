@@ -29,7 +29,6 @@ public class DetailActivity extends AppCompatActivity {
     EmployeeViewModel employeeViewModel;
     Employee employeeReceived;
 
-    Employee employeeTest;
     ProgressDialog progressDialog;
 
     @Override
@@ -48,21 +47,21 @@ public class DetailActivity extends AppCompatActivity {
         buttonUpdate = findViewById(R.id.button_update);
         buttonDelete = findViewById(R.id.button_delete);
 
-        employeeViewModel = ViewModelProviders.of(this).get(EmployeeViewModel.class);
-        employeeViewModel.init();
 
         employeeReceived = (Employee) getIntent().getSerializableExtra("employee");
 
-        employeeViewModel.setValueDefaultGetEmployeeById();
+//        employeeViewModel.setValueDefaultGetEmployeeById();
 
+        employeeViewModel = ViewModelProviders.of(this).get(EmployeeViewModel.class);
+        employeeViewModel.init();
         employeeViewModel.getEmployeeById(employeeReceived.getId()).observe(this,new Observer<Employee>() {
             @Override
             public void onChanged(Employee employee) {
                 loadEmployee(employee);
-                employeeTest = employee;
                 progressDialog.dismiss();
             }
         });
+
 
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override

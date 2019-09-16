@@ -16,6 +16,10 @@ import com.lifetime.mvvm_retrofit.model.EmployeeResponse;
 import com.lifetime.mvvm_retrofit.repository.EmployeeRepository;
 import com.lifetime.mvvm_retrofit.viewmodels.EmployeeViewModel;
 
+import static com.lifetime.mvvm_retrofit.constant.Constant.ADDRESS;
+import static com.lifetime.mvvm_retrofit.constant.Constant.NAME;
+import static com.lifetime.mvvm_retrofit.constant.Constant.SUBJECT;
+
 public class RegisterActivity extends AppCompatActivity {
     TextView registerName,registerSalary, registerAge;
     Button buttonSave;
@@ -65,8 +69,12 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+//        Intent result = new Intent();
+//        result.putExtra(NAME,sName);
+//        result.putExtra(ADDRESS,sSalary);
+//        result.putExtra(SUBJECT,sAge);
+//        setResult(RESULT_OK,result);
         employeeViewModel.createNewEmployee(new EmployeeResponse(sName,sSalary,sAge));
-//        startActivity(new Intent(getApplication(),ListActivity.class));
         Toast.makeText(RegisterActivity.this, "Saved", Toast.LENGTH_SHORT).show();
         finish();
     }

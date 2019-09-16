@@ -50,8 +50,6 @@ public class EmployeeRepository {
         return employeesData;
     }
 
-
-
     public MutableLiveData<Employee> getEmployeeById(int id){
         final MutableLiveData<Employee> employee = new MutableLiveData<>();
         employeeAPI.getEmployeeById(id).enqueue(new Callback<Employee>() {

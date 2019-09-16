@@ -1,11 +1,9 @@
 package com.lifetime.mvvm_retrofit.activity;
 
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,12 +22,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lifetime.mvvm_retrofit.R;
 import com.lifetime.mvvm_retrofit.adapter.ListAdapter;
 import com.lifetime.mvvm_retrofit.model.Employee;
+import com.lifetime.mvvm_retrofit.model.EmployeeResponse;
 import com.lifetime.mvvm_retrofit.viewmodels.EmployeeViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.lifetime.mvvm_retrofit.constant.Constant.ADDRESS;
+import static com.lifetime.mvvm_retrofit.constant.Constant.NAME;
+import static com.lifetime.mvvm_retrofit.constant.Constant.SUBJECT;
+
 public class ListActivity extends AppCompatActivity {
+    public static final int CODE = 110;
     ArrayList<Employee> employeesArrayList = new ArrayList<>();
     ListAdapter listAdapter;
     RecyclerView recyclerView;
@@ -38,19 +42,17 @@ public class ListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setContentView(R.layout.activity_main);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
+        recyclerView = findViewById(R.id.recycler_list);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
-        recyclerView = findViewById(R.id.recycler_list);
-
         employeeViewModel = ViewModelProviders.of(this).get(EmployeeViewModel.class);
-        employeeViewModel.init();
 
-        employeeViewModel.getEmployeeRepository().observe(this, new Observer<List<Employee>>() {
+        employeeViewModel.getEmployeeRepositoryTest().observe(this, new Observer<List<Employee>>() {
             @Override
             public void onChanged(List<Employee> employees) {
                 employeesArrayList.addAll(employees);
@@ -65,10 +67,15 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.floating_button_refresh).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressDialog.show();
 
-
-        setupRecyclerView(employeesArrayList);
-
+                employeeViewModel.getDataAllEmployee();
+                employeeViewModel.getEmployeeRepositoryTest();
+            }
+        });
         findViewById(R.id.floating_button_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,63 +83,13 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.floating_button_refresh).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressDialog.show();
-                employeeViewModel.getDataAllEmployee();
-
-            }
-        });
     }
 
     private void setupRecyclerView(ArrayList<Employee> list) {
-        if (listAdapter == null) {
-            listAdapter = new ListAdapter(employeesArrayList, ListActivity.this);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(listAdapter);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setNestedScrollingEnabled(true);
-            listAdapter.notifyDataSetChanged();
-//            listAdapter.setOnItemClickListener(new ListAdapter.OnItemClickListener() {
-//                @Override
-//                public void OnItemClick(Employee employee) {
-////                    MutableLiveData<Employee> testUnit = service.getEmployeeById(employee.getId());
-////                    Employee testUnit2 = testUnit.getValue();
-////                    int testUnit3 = testUnit2.getId();
-////                    int getId = service.getEmployeeById(employee.getId()).getValue().getId();
-//                    Intent intent = new Intent(ListActivity.this, DetailActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putInt("id", employee.getId());
-//                    bundle.putString("name",employee.getName());
-//                    bundle.putString("salary",employee.getSalary());
-//                    bundle.putString("age",employee.getAge());
-//                    intent.putExtra("package", bundle);
-//                    startActivity(intent);
-//                }
-//            });
-        } else {
+
             listAdapter = new ListAdapter(list, ListActivity.this);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(listAdapter);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setNestedScrollingEnabled(true);
-            listAdapter.notifyDataSetChanged();
-//            listAdapter.setOnItemClickListener(new ListAdapter.OnItemClickListener() {
-//                @Override
-//                public void OnItemClick(Employee employee) {
-////                    MutableLiveData<Employee> testUnit = service.getEmployeeById(employee.getId());
-////                    Employee testUnit2 = testUnit.getValue();
-////                    int testUnit3 = testUnit2.getId();
-////                    int getId = service.getEmployeeById(employee.getId()).getValue().getId();
-//                    Intent intent = new Intent(ListActivity.this, DetailActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putInt("id", employee.getId());
-//                    intent.putExtra("package", bundle);
-//                    startActivity(intent);
-//                }
-//            });
-        }
     }
 
     @Override
@@ -164,8 +121,11 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        progressDialog.show();
         employeeViewModel.getDataAllEmployee();
-        Log.d("ABCASDF","done");
+        employeeViewModel.getEmployeeRepositoryTest();
+
     }
+
 
 }

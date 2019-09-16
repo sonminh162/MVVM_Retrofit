@@ -13,7 +13,6 @@ import java.util.List;
 public class EmployeeViewModel extends ViewModel {
     private MutableLiveData<List<Employee>> mutableLiveData;
     private EmployeeRepository employeeRepository;
-    private MutableLiveData<Employee> mutableLiveDataEmployee;
 
     public void init(){
         if(mutableLiveData != null) {
@@ -28,7 +27,32 @@ public class EmployeeViewModel extends ViewModel {
     }
 
     public void createNewEmployee(EmployeeResponse employee){
-        employeeRepository.createEmployee(employee);
+        EmployeeRepository.getInstance().createEmployee(employee);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public LiveData<List<Employee>> getEmployeeRepositoryTest(){
+        return EmployeeRepository.getInstance().getAllEmployee();
     }
 
     public LiveData<Employee> getEmployeeById(int id){
@@ -50,4 +74,5 @@ public class EmployeeViewModel extends ViewModel {
     public void setValueDefaultGetEmployeeById(){
         EmployeeRepository.getInstance().getEmployeeById(10);
     }
+
 }
