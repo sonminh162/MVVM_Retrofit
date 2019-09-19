@@ -2,13 +2,11 @@ package com.lifetime.mvvm_retrofit.activity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -50,8 +48,6 @@ public class DetailActivity extends AppCompatActivity {
 
         employeeReceived = (Employee) getIntent().getSerializableExtra("employee");
 
-//        employeeViewModel.setValueDefaultGetEmployeeById();
-
         employeeViewModel = ViewModelProviders.of(this).get(EmployeeViewModel.class);
         employeeViewModel.init();
         employeeViewModel.getEmployeeById(employeeReceived.getId()).observe(this,new Observer<Employee>() {
@@ -61,7 +57,6 @@ public class DetailActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
         });
-
 
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,24 +101,6 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-
-//        Bundle bundle = getIntent().getBundleExtra("package");
-//        int idResult = bundle.getInt("id");
-//        String nameResult = bundle.getString("name");
-//        String salaryResult = bundle.getString("salary");
-//        String ageResult = bundle.getString("age");
-//
-//        loadEmployee(new Employee(nameResult,salaryResult,ageResult));
-
-//        final Employee[] test = new Employee[1];
-//        employeeViewModel.getEmployeeById(idResult).observe(new Observer<Employee>() {
-//            @Override
-//            public void onChanged(Employee employee) {
-//                test[0] = employee;
-//            }
-//        });
-
-//        loadEmployee(employeeReceived);
     }
 
     private void loadEmployee(Employee employee){
@@ -156,16 +133,10 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        employeeViewModel.updateEmployee(employee.getId(),new EmployeeResponse(sName,sSalary,sAge));
-        startActivity(new Intent(getApplication(),ListActivity.class));
-        Toast.makeText(DetailActivity.this, "Saved", Toast.LENGTH_SHORT).show();
-        finish();
+        employeeViewModel.updateEmployee(employee.getId(),new EmployeeResponse(sName,sSalary,sAge),this);
     }
 
     private void deleteEmployee(final Employee employee){
-        employeeViewModel.deleteEmployee(employee);
-//        startActivity(new Intent(getApplication(),ListActivity.class));
-        Toast.makeText(DetailActivity.this, "Saved", Toast.LENGTH_SHORT).show();
-        finish();
+        employeeViewModel.deleteEmployee(employee,this);
     }
 }

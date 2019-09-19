@@ -3,7 +3,6 @@ package com.lifetime.mvvm_retrofit.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,28 +12,15 @@ import android.widget.SearchView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lifetime.mvvm_retrofit.R;
 import com.lifetime.mvvm_retrofit.adapter.ListAdapter;
-import com.lifetime.mvvm_retrofit.model.Employee;
-import com.lifetime.mvvm_retrofit.model.EmployeeResponse;
 import com.lifetime.mvvm_retrofit.viewmodels.EmployeeViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.lifetime.mvvm_retrofit.constant.Constant.ADDRESS;
-import static com.lifetime.mvvm_retrofit.constant.Constant.NAME;
-import static com.lifetime.mvvm_retrofit.constant.Constant.SUBJECT;
-
 public class ListActivity extends AppCompatActivity {
-    public static final int CODE = 110;
-    ArrayList<Employee> employeesArrayList = new ArrayList<>();
     ListAdapter listAdapter;
     RecyclerView recyclerView;
     EmployeeViewModel employeeViewModel;
@@ -50,30 +36,22 @@ public class ListActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading....");
         progressDialog.show();
 
+        listAdapter = new ListAdapter(ListActivity.this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(listAdapter);
+
         employeeViewModel = ViewModelProviders.of(this).get(EmployeeViewModel.class);
-
-        employeeViewModel.getEmployeeRepositoryTest().observe(this, new Observer<List<Employee>>() {
-            @Override
-            public void onChanged(List<Employee> employees) {
-                employeesArrayList.addAll(employees);
-                setupRecyclerView(employeesArrayList);
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        progressDialog.dismiss();
-                    }
-                }, 1000);
-            }
+        employeeViewModel.init();
+        employeeViewModel.employeesData.observe(this, employees -> {
+            listAdapter.setListData(employees);
+            progressDialog.dismiss();
         });
 
         findViewById(R.id.floating_button_refresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 progressDialog.show();
-
-                employeeViewModel.getDataAllEmployee();
-                employeeViewModel.getEmployeeRepositoryTest();
+                employeeViewModel.getAllEmployee();
             }
         });
         findViewById(R.id.floating_button_add).setOnClickListener(new View.OnClickListener() {
@@ -82,14 +60,6 @@ public class ListActivity extends AppCompatActivity {
                 startActivity(new Intent(ListActivity.this, RegisterActivity.class));
             }
         });
-
-    }
-
-    private void setupRecyclerView(ArrayList<Employee> list) {
-
-            listAdapter = new ListAdapter(list, ListActivity.this);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(listAdapter);
     }
 
     @Override
@@ -121,11 +91,7 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        progressDialog.show();
-        employeeViewModel.getDataAllEmployee();
-        employeeViewModel.getEmployeeRepositoryTest();
-
+        employeeViewModel.getAllEmployee();
     }
-
 
 }

@@ -20,20 +20,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> implements Filterable  {
-    private OnItemClickListener listener;
-    private List<Employee> employees;
+    private List<Employee> employees = new ArrayList();
     private Context context;
 
     private List<Employee> employeesFullList;
 
-    public void setOnItemClickListener(OnItemClickListener listener){
-        this.listener = listener;
+    public ListAdapter(Context context) {
+        this.context = context;
     }
 
     public ListAdapter(List<Employee> employees, Context context) {
-        this.employees = employees  ;
         this.context = context;
         employeesFullList = new ArrayList<>(employees);
+    }
+    public void setListData(List<Employee> list){
+        this.employees = list;
+        employeesFullList = new ArrayList<>(list);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -47,11 +50,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         holder.bindView(employees.get(position));
-//        holder.id.setBackgroundColor(0xFF93C47D);
-
-//        Picasso.Builder builder = new Picasso.Builder(context);
-//        builder.downloader(new OkHttp3Downloader(context));
-//        builder.build().load(employees.get(position).get)
     }
 
     @Override
@@ -113,19 +111,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             id = itemView.findViewById(R.id.textViewId);
 
             itemView.setOnClickListener(this);
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Employee employee = employees.get(getAdapterPosition());
-//
-//                    Intent intent = new Intent(context, DetailActivity.class);
-//                    intent.putExtra("employee", employee);
-//
-//                    context.startActivity(intent);
-//                }
-//            });
-
-
         }
 
         public void bindView(Employee employee) {
@@ -146,20 +131,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             context.startActivity(intent);
         }
 
-//        @Override
-//        public void onClick(View view) {
-//            Employee employee = employees.get(getAdapterPosition());
-//
-//            Intent intent = new Intent(context, DetailActivity.class);
-//            intent.putExtra("employee", employee);
-//
-//            context.startActivity(intent);
-//        }
     }
-
-    public interface OnItemClickListener{
-        void OnItemClick(Employee employee);
-    }
-
 }
 
